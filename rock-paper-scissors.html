@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Rock Paper Scissors - GameHub</title>
+
+<style>
+body{
+    background:#111;
+    color:white;
+    text-align:center;
+    font-family:Arial;
+    padding-top:80px;
+}
+
+h1{
+    font-size:45px;
+}
+
+button{
+    background:#6c2cff;
+    color:white;
+    border:none;
+    padding:18px 25px;
+    margin:10px;
+    border-radius:10px;
+    font-size:20px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#8a5cff;
+}
+
+#result{
+    font-size:28px;
+    margin:30px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🪨 Rock 📄 Paper ✂️ Scissors</h1>
+
+<p>Choose your move!</p>
+
+<button onclick="play('Rock')">🪨 Rock</button>
+<button onclick="play('Paper')">📄 Paper</button>
+<button onclick="play('Scissors')">✂️ Scissors</button>
+
+<div id="result"></div>
+
+<script>
+
+function play(player){
+
+    let choices = ["Rock","Paper","Scissors"];
+    let computer = choices[Math.floor(Math.random()*3)];
+
+    let result = "";
+
+    if(player === computer){
+        result = "🤝 Draw!";
+    }
+    else if(
+        (player === "Rock" && computer === "Scissors") ||
+        (player === "Paper" && computer === "Rock") ||
+        (player === "Scissors" && computer === "Paper")
+    ){
+        result = "🎉 You Win!";
+    }
+    else{
+        result = "😈 Computer Wins!";
+    }
+
+    document.getElementById("result").innerHTML =
+        "You: " + player + "<br>" +
+        "Computer: " + computer + "<br><br>" +
+        result;
+}
+
+</script>
+
+</body>
+</html>
