@@ -1,15 +1,110 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>GameHub</title>
+    <title>GameHub - Free Online Games</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #111;
+            color: white;
+        }
+
+        header {
+            background: #1b1b1b;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 40px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: #222;
+        }
+
+        .hero h2 {
+            font-size: 35px;
+        }
+
+        .hero p {
+            color: #bbb;
+            font-size: 18px;
+        }
+
+        .games {
+            padding: 30px;
+            text-align: center;
+        }
+
+        .game-card {
+            display: inline-block;
+            background: #1e1e1e;
+            width: 220px;
+            margin: 15px;
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .game-card h3 {
+            font-size: 22px;
+        }
+
+        .play {
+            background: #6c2cff;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .play:hover {
+            background: #8a55ff;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>🎮 GameHub</h1>
-    <h2>Free Online Games</h2>
 
-    <p>Welcome to GameHub!</p>
+    <header>
+        <h1>🎮 GameHub</h1>
+    </header>
 
-    <button>Play Games</button>
+    <section class="hero">
+        <h2>Free Online Games</h2>
+        <p>Play awesome games directly in your browser!</p>
+    </section>
+
+    <section class="games">
+
+        <h2>🔥 Popular Games</h2>
+
+        <div class="game-card">
+            <h3>🎯 Game 1</h3>
+            <p>Fun browser game</p>
+            <button class="play">PLAY</button>
+        </div>
+
+        <div class="game-card">
+            <h3>🚀 Game 2</h3>
+            <p>Fun browser game</p>
+            <button class="play">PLAY</button>
+        </div>
+
+        <div class="game-card">
+            <h3>🧩 Game 3</h3>
+            <p>Fun browser game</p>
+            <button class="play">PLAY</button>
+        </div>
+
+    </section>
+
 </body>
 </html>
