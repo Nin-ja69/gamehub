@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Whack-a-Mole - GameHub</title>
+
+<style>
+body{
+    margin:0;
+    background:#0b0b0f;
+    color:white;
+    font-family:Arial,sans-serif;
+    text-align:center;
+    padding:25px;
+}
+
+h1{
+    font-size:40px;
+}
+
+#score{
+    font-size:24px;
+    margin:15px;
+}
+
+#time{
+    font-size:20px;
+    color:#aaa;
+}
+
+#game{
+    width:420px;
+    max-width:95vw;
+    margin:30px auto;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+}
+
+.hole{
+    height:110px;
+    background:#222;
+    border:2px solid #333;
+    border-radius:15px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:50px;
+    cursor:pointer;
+}
+
+.hole:hover{
+    border-color:#6c2cff;
+}
+
+button{
+    background:#6c2cff;
+    color:white;
+    border:0;
+    padding:12px 25px;
+    border-radius:8px;
+    font-size:18px;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🐹 Whack-a-Mole</h1>
+
+<div id="score">Score: 0</div>
+<div id="time">Time: 30</div>
+
+<div id="game"></div>
+
+<button onclick="startGame()">🔄 Start / Restart</button>
+
+<script>
+
+const game = document.getElementById("game");
+
+let score = 0;
+let time = 30;
+let molePosition = -1;
+let timer;
+let moleTimer;
+
+function createBoard(){
+
+    game.innerHTML="";
+
+    for(let i=0;i<9;i++){
+
+        const hole=document.createElement("div");
+
+        hole.className="hole";
+        hole.textContent="";
+
+        hole.onclick=function(){
+
+            if(i===molePosition){
+
+                score++;
+
+                document.getElementById("score").textContent =
+                    "Score: "+score;
+
+                molePosition=-1;
+
+                drawMole();
+            }
+        };
+
+        game.appendChild(hole);
+    }
+}
+
+function drawMole(){
+
+    const holes=document.querySelectorAll(".hole");
+
+    holes.forEach(hole=>{
+        hole.textContent="";
+    });
+
+    molePosition=Math.floor(Math.random()*9);
+
+    holes[molePosition].textContent="🐹";
+}
+
+function startGame(){
+
+    clearInterval(timer);
+    clearInterval(moleTimer);
+
+    score=0;
+    time=30;
+
+    document.getElementById("score").textContent="Score: 0";
+    document.getElementById("time").textContent="Time: 30";
+
+    createBoard();
+    drawMole();
+
+    moleTimer=setInterval(drawMole,700);
+
+    timer=setInterval(()=>{
+
+        time--;
+
+        document.getElementById("time").textContent =
+            "Time: "+time;
+
+        if(time<=0){
+
+            clearInterval(timer);
+            clearInterval(moleTimer);
+
+            molePosition=-1;
+
+            document.querySelectorAll(".hole")
+                .forEach(hole=>hole.textContent="");
+
+            alert("Game Over! Your score: "+score);
+        }
+
+    },1000);
+}
+
+createBoard();
+
+</script>
+
+</body>
+</html>
