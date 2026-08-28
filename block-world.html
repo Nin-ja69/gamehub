@@ -101,7 +101,29 @@ let yaw = 0;
 let pitch = 0;
 
 const blocks = [];
+const raycaster = new THREE.Raycaster();
+const center = new THREE.Vector2(0, 0);
 
+document.addEventListener("mousedown", function(e) {
+    if (document.pointerLockElement !== document.body) return;
+
+    raycaster.setFromCamera(center, camera);
+
+    const hits = raycaster.intersectObjects(blocks);
+
+    if (hits.length > 0) {
+        const block = hits[0].object;
+
+        scene.remove(block);
+
+        const index = blocks.indexOf(block);
+        if (index !== -1) {
+            blocks.splice(index, 1);
+        }
+
+        block.geometry.dispose();
+    }
+});
 const blockSize = 2;
 
 const player = {
