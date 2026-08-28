@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pong - GameHub</title>
+
+<style>
+body{
+    margin:0;
+    background:#0b0b0f;
+    color:white;
+    font-family:Arial,sans-serif;
+    text-align:center;
+}
+
+h1{
+    margin:30px 0 10px;
+}
+
+#score{
+    font-size:25px;
+    margin:10px;
+}
+
+canvas{
+    background:#17171f;
+    border:3px solid #6c2cff;
+    max-width:95%;
+}
+
+button{
+    margin-top:20px;
+    padding:12px 25px;
+    background:#6c2cff;
+    color:white;
+    border:0;
+    border-radius:8px;
+    font-size:18px;
+    cursor:pointer;
+}
+
+p{
+    color:#aaa;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🏓 Pong</h1>
+<p>Use ↑ and ↓ keys to move your paddle</p>
+
+<div id="score">You: 0 | Computer: 0</div>
+
+<canvas id="game" width="700" height="400"></canvas>
+
+<br>
+
+<button onclick="restart()">🔄 Restart</button>
+
+<script>
+
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+let player;
+let computer;
+let ball;
+let playerScore;
+let computerScore;
+let game;
+
+function restart(){
+
+    player = {
+        x:20,
+        y:160,
+        width:12,
+        height:80,
+        speed:7
+    };
+
+    computer = {
+        x:668,
+        y:160,
+        width:12,
+        height:80,
+        speed:5
+    };
+
+    ball = {
+        x:350,
+        y:200,
+        size:10,
+        dx:5,
+        dy:4
+    };
+
+    playerScore = 0;
+    computerScore = 0;
+
+    clearInterval(game);
+    game = setInterval(update,16);
+}
+
+function draw(){
+
+    ctx.fillStyle="#17171f";
+    ctx.fillRect(0,0,700,400);
+
+    ctx.strokeStyle="#444";
+    ctx.setLineDash([10,10]);
+    ctx.beginPath();
+    ctx.moveTo(350,0);
+    ctx.lineTo(350,400);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle="#ffffff";
+
+    ctx.fillRect(
+        player.x,
+        player.y,
+        player.width,
+        player.height
+    );
+
+    ctx.fillRect(
+        computer.x,
+        computer.y,
+        computer.width,
+        computer.height
+    );
+
+    ctx.fillRect(
+        ball.x,
+        ball.y,
+        ball.size,
+        ball.size
+    );
+}
+
+function update(){
+
+    ball.x += ball.dx;
+    ball.y += ball.dy;
+
+    if(ball.y <= 0 || ball.y >= 390){
+        ball.dy *= -1;
+    }
+
+    if(
+        ball.x < player.x + player.width &&
+        ball.x + ball.size > player.x &&
+        ball.y < player.y + player.height &&
+        ball.y + ball.size > player.y
+    ){
+        ball.dx = Math.abs(ball.dx);
+    }
+
+    if(
+        ball.x + ball.size > computer.x &&
+        ball.x < computer.x + computer.width &&
+        ball.y < computer.y + computer.height &&
+        ball.y + ball.size > computer.y
+    ){
+        ball.dx = -Math.abs(ball.dx);
+    }
+
+    if(ball.y > computer.y + computer.height/2){
+        computer.y += computer.speed;
+    }else{
+        computer.y -= computer.speed;
+    }
+
+    computer.y = Math.max(
+        0,
+        Math.min(320, computer.y)
+    );
+
+    if(ball.x < 0){
+        computerScore++;
+        resetBall();
+    }
+
+    if(ball.x > 700){
+        playerScore++;
+        resetBall();
+    }
+
+    document.getElementById("score").textContent =
+        "You: " + playerScore +
+        " | Computer: " + computerScore;
+
+    draw();
+}
+
+function resetBall(){
+
+    ball.x = 350;
+    ball.y = 200;
+
+    ball.dx = ball.dx > 0 ? -5 : 5;
+    ball.dy = Math.random() > 0.5 ? 4 : -4;
+}
+
+document.addEventListener("keydown",function(e){
+
+    if(e.key === "ArrowUp"){
+        player.y -= player.speed;
+    }
+
+    if(e.key === "ArrowDown"){
+        player.y += player.speed;
+    }
+
+    player.y = Math.max(
+        0,
+        Math.min(320, player.y)
+    );
+});
+
+restart();
+
+</script>
+
+</body>
+</html>
