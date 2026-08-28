@@ -1,57 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>GameHub - Free Online Games</title>
 
 <style>
+*{
+    box-sizing:border-box;
+}
+
 body{
     margin:0;
-    background:#111;
+    background:#0b0b0f;
     color:white;
-    font-family:Arial;
-    text-align:center;
+    font-family:Arial,sans-serif;
 }
 
 header{
-    background:#1b1b1b;
-    padding:25px;
-    font-size:35px;
+    background:#15151d;
+    padding:20px 6%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    position:sticky;
+    top:0;
+    z-index:10;
+}
+
+.logo{
+    font-size:28px;
     font-weight:bold;
 }
 
+.search{
+    width:250px;
+    padding:11px 15px;
+    border-radius:25px;
+    border:none;
+    outline:none;
+}
+
 .hero{
+    text-align:center;
     padding:70px 20px;
-    background:#222;
+    background:linear-gradient(135deg,#171222,#111);
 }
 
 .hero h1{
-    font-size:45px;
+    font-size:50px;
+    margin:0 0 15px;
+}
+
+.hero p{
+    color:#aaa;
+    font-size:18px;
+}
+
+.categories{
+    text-align:center;
+    padding:25px 10px;
+}
+
+.category{
+    display:inline-block;
+    margin:6px;
+    padding:9px 18px;
+    border:1px solid #6c2cff;
+    border-radius:20px;
+    color:white;
 }
 
 .games{
-    padding:40px 20px;
+    max-width:1200px;
+    margin:auto;
+    padding:30px 20px 60px;
+}
+
+.games h2{
+    text-align:center;
+    font-size:32px;
+    margin-bottom:30px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
 }
 
 .card{
-    display:inline-block;
-    width:260px;
-    margin:15px;
-    padding:30px;
-    background:#222;
-    border-radius:15px;
+    background:#17171f;
+    border:1px solid #292933;
+    border-radius:16px;
+    padding:25px;
+    text-align:center;
+    transition:0.2s;
 }
 
-.card h2{
-    font-size:25px;
+.card:hover{
+    transform:translateY(-5px);
+    border-color:#6c2cff;
+}
+
+.icon{
+    font-size:55px;
+}
+
+.card h3{
+    font-size:22px;
 }
 
 .card p{
-    color:#ccc;
+    color:#aaa;
+    min-height:40px;
 }
 
 .play{
     display:inline-block;
-    padding:12px 30px;
+    margin-top:10px;
+    padding:11px 28px;
     background:#6c2cff;
     color:white;
     text-decoration:none;
@@ -60,7 +129,29 @@ header{
 }
 
 .play:hover{
-    background:#853cff;
+    background:#8a55ff;
+}
+
+footer{
+    text-align:center;
+    padding:25px;
+    background:#15151d;
+    color:#777;
+}
+
+@media(max-width:600px){
+    header{
+        flex-direction:column;
+        gap:15px;
+    }
+
+    .search{
+        width:90%;
+    }
+
+    .hero h1{
+        font-size:38px;
+    }
 }
 </style>
 </head>
@@ -68,44 +159,101 @@ header{
 <body>
 
 <header>
-🎮 GameHub
+    <div class="logo">🎮 GameHub</div>
+
+    <input
+        class="search"
+        type="text"
+        id="search"
+        placeholder="🔍 Search games..."
+        onkeyup="searchGames()"
+    >
 </header>
 
 <section class="hero">
-<h1>Free Online Games</h1>
-<p>Play awesome games directly in your browser!</p>
+    <h1>Play Free Online Games</h1>
+    <p>Simple games. No downloads. Just play.</p>
 </section>
+
+<div class="categories">
+    <span class="category">🔥 Popular</span>
+    <span class="category">🧩 Puzzle</span>
+    <span class="category">🎯 Classic</span>
+    <span class="category">⚡ Arcade</span>
+</div>
 
 <section class="games">
 
-<h1>🔥 Popular Games</h1>
+<h2>🎮 All Games</h2>
 
-<div class="card">
-<h2>❌⭕ Tic Tac Toe</h2>
-<p>Classic Tic Tac Toe game!</p>
+<div class="grid" id="gameGrid">
 
-<a class="play" href="tic-tac-toe.html">PLAY</a>
+    <div class="card" data-name="tic tac toe">
+        <div class="icon">❌⭕</div>
+        <h3>Tic Tac Toe</h3>
+        <p>Classic two-player game.</p>
+        <a class="play" href="tic-tac-toe.html">PLAY</a>
+    </div>
+
+    <div class="card" data-name="snake">
+        <div class="icon">🐍</div>
+        <h3>Snake</h3>
+        <p>Eat food and grow your snake.</p>
+        <a class="play" href="snake.html">PLAY</a>
+    </div>
+
+    <div class="card" data-name="rock paper scissors">
+        <div class="icon">🪨📄✂️</div>
+        <h3>Rock Paper Scissors</h3>
+        <p>Can you beat the computer?</p>
+        <a class="play" href="rock-paper-scissors.html">PLAY</a>
+    </div>
+
+    <div class="card" data-name="memory game">
+        <div class="icon">🧠</div>
+        <h3>Memory Game</h3>
+        <p>Find all matching pairs.</p>
+        <a class="play" href="memory.html">PLAY</a>
+    </div>
+
+    <div class="card" data-name="2048">
+        <div class="icon">🧩</div>
+        <h3>2048</h3>
+        <p>Combine tiles and reach 2048.</p>
+        <a class="play" href="2048.html">PLAY</a>
+    </div>
+
 </div>
 
-<div class="card">
-<h2>🐍 Snake</h2>
-<p>Classic Snake game!</p>
-<a class="play" href="snake.html">PLAY</a>
-<div class="card">
-    <h2>🪨 Rock Paper Scissors ✂️</h2>
-    <p>Classic Rock Paper Scissors game!</p>
-    <a class="play" href="rock-paper-scissors.html">PLAY</a>
-</div>
-<div class="card">
-    <h2>🧠 Memory Game</h2>
-    <p>Match all the cards!</p>
-    <a class="play" href="memory.html">PLAY</a>
-</div>
-<div class="card">
-    <h2>🧩 2048</h2>
-    <p>Combine the tiles and reach 2048!</p>
-    <a class="play" href="2048.html">PLAY</a>
-</div>
+</section>
+
+<footer>
+    © 2026 GameHub • Free Browser Games
+</footer>
+
+<script>
+function searchGames(){
+
+    let search = document
+        .getElementById("search")
+        .value
+        .toLowerCase();
+
+    let cards = document.querySelectorAll(".card");
+
+    cards.forEach(card => {
+
+        let name = card.dataset.name;
+
+        if(name.includes(search)){
+            card.style.display = "block";
+        }else{
+            card.style.display = "none";
+        }
+
+    });
+}
+</script>
 
 </body>
 </html>
