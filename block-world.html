@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Block World - GameHub</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        overflow: hidden;
+        background: #87ceeb;
+        font-family: Arial, sans-serif;
+    }
+
+    #info {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 10;
+        color: white;
+        background: rgba(0,0,0,0.65);
+        padding: 12px 16px;
+        border-radius: 10px;
+        line-height: 1.5;
+    }
+
+    #crosshair {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 25px;
+        z-index: 10;
+        pointer-events: none;
+    }
+
+    #start {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 20;
+        padding: 18px 30px;
+        border: none;
+        border-radius: 12px;
+        background: #6c2cff;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    #back {
+        position: fixed;
+        bottom: 15px;
+        left: 15px;
+        z-index: 10;
+        padding: 10px 15px;
+        background: rgba(0,0,0,0.65);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+    }
+</style>
+</head>
+
+<body>
+
+<div id="info">
+    🧱 <b>Block World</b><br>
+    WASD = Move<br>
+    SPACE = Jump<br>
+    Mouse = Look
+</div>
+
+<div id="crosshair">+</div>
+
+<button id="start">▶ CLICK TO PLAY</button>
+
+<a id="back" href="index.html">⬅ GameHub</a>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.min.js"></script>
+
+<script>
+
+let scene;
+let camera;
+let renderer;
+
+let keys = {};
+
+let velocityY = 0;
+let canJump = false;
+
+let yaw = 0;
+let pitch = 0;
+
+const blocks = [];
+
+const blockSize = 2;
+
+const player = {
+    x: 0,
+    y: 4,
+    z: 8,
+    height: 3.5,
+    speed: 0.12
+};
+
+
+/* ---------------- SCENE ---------------- */
+
+scene = new THREE.Scene();
+
+scene.background = new THREE.Color(0x87ceeb);
+
+scene.fog = new THREE.Fog(0x87ceeb, 30, 100);
+
+
+/* ---------------- CAMERA ---------------- */
+
+camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    200
+);
+
+camera.position.set(
+    player.x,
+    player.y,
+    player.z
+);
+
+
+/* ---------------- RENDERER ---------------- */
+
+renderer = new THREE.WebGLRenderer({
+    antialias: true
+});
+
+renderer.setSize(
+    window.innerWidth,
+    window.innerHeight
+);
+
+renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio, 2)
+);
+
+document.body.appendChild(renderer.domElement);
+
+
+/* ---------------- LIGHT ---------------- */
+
+const ambient = new THREE.AmbientLight(
+    0xffffff,
+    1.2
+);
+
+scene.add(ambient);
+
+const sun = new THREE.DirectionalLight(
+    0xffffff,
+    1.5
+);
+
+sun.position.set(30,50,20);
+
+scene.add(sun);
+
+
+/* ---------------- BLOCK MATERIALS ---------------- */
+
+const grassMaterial = new THREE.MeshLambertMaterial({
+    color: 0x55aa35
+});
+
+const dirtMaterial = new THREE.MeshLambertMaterial({
+    color: 0x8b5a2b
+});
+
+const stoneMaterial = new THREE.MeshLambertMaterial({
+    color: 0x777777
+});
+
+
+/* ---------------- CREATE BLOCK ---------------- */
+
+function createBlock(x, y, z, type = "grass") {
+
+    let material = grassMaterial;
+
+    if(type === "dirt") {
+        material = dirtMaterial;
+    }
+
+    if(type === "stone") {
+        material = stoneMaterial;
+    }
+
+    const geometry = new THREE.BoxGeometry(
+        blockSize,
+        blockSize,
+        blockSize
+    );
+
+    const cube = new THREE.Mesh(
+        geometry,
+        material
+    );
+
+    cube.position.set(x, y, z);
+
+    scene.add(cube);
+
+    blocks.push(cube);
+
+    return cube;
+}
+
+
+/* ---------------- WORLD ---------------- */
+
+for(let x = -10; x <= 10; x++) {
+
+    for(let z = -10; z <= 10; z++) {
+
+        createBlock(
+            x * blockSize,
+            0,
+            z * blockSize,
+            "grass"
+        );
+
+        createBlock(
+            x * blockSize,
+            -2,
+            z * blockSize,
+            "dirt"
+        );
+
+        createBlock(
+            x * blockSize,
+            -4,
+            z * blockSize,
+            "stone"
+        );
+    }
+}
+
+
+/* ---------------- SMALL HILLS ---------------- */
+
+for(let i = 0; i < 20; i++) {
+
+    let x = Math.floor(Math.random() * 15 - 7);
+    let z = Math.floor(Math.random() * 15 - 7);
+
+    createBlock(
+        x * blockSize,
+        2,
+        z * blockSize,
+        "grass"
+    );
+}
+
+
+/* ---------------- TREE ---------------- */
+
+function createTree(x, z) {
+
+    for(let y = 2; y <= 6; y++) {
+
+        createBlock(
+            x,
+            y * blockSize,
+            z,
+            "dirt"
+        );
+    }
+
+    for(let dx = -1; dx <= 1; dx++) {
+
+        for(let dz = -1; dz <= 1; dz++) {
+
+            createBlock(
+                x + dx * blockSize,
+                8,
+                z + dz * blockSize,
+                "grass"
+            );
+        }
+    }
+}
+
+createTree(-12, -8);
+createTree(12, -10);
+createTree(-8, 12);
+
+
+/* ---------------- CONTROLS ---------------- */
+
+document.addEventListener("keydown", function(e) {
+
+    keys[e.key.toLowerCase()] = true;
+
+    if(e.code === "Space" && canJump) {
+
+        velocityY = 0.35;
+
+        canJump = false;
+    }
+});
+
+
+document.addEventListener("keyup", function(e) {
+
+    keys[e.key.toLowerCase()] = false;
+});
+
+
+/* ---------------- MOUSE LOOK ---------------- */
+
+document.addEventListener("mousemove", function(e) {
+
+    if(document.pointerLockElement !== document.body) {
+        return;
+    }
+
+    yaw -= e.movementX * 0.002;
+    pitch -= e.movementY * 0.002;
+
+    pitch = Math.max(
+        -Math.PI / 2,
+        Math.min(Math.PI / 2, pitch)
+    );
+
+    camera.rotation.order = "YXZ";
+
+    camera.rotation.y = yaw;
+    camera.rotation.x = pitch;
+});
+
+
+/* ---------------- START GAME ---------------- */
+
+document.getElementById("start").addEventListener(
+    "click",
+    function() {
+
+        document.body.requestPointerLock();
+
+        this.style.display = "none";
+    }
+);
+
+
+/* ---------------- MOVEMENT ---------------- */
+
+function updatePlayer() {
+
+    let speed = player.speed;
+
+    let forward = new THREE.Vector3(
+        -Math.sin(yaw),
+        0,
+        -Math.cos(yaw)
+    );
+
+    let right = new THREE.Vector3(
+        Math.cos(yaw),
+        0,
+        -Math.sin(yaw)
+    );
+
+    if(keys["w"]) {
+
+        player.x += forward.x * speed;
+        player.z += forward.z * speed;
+    }
+
+    if(keys["s"]) {
+
+        player.x -= forward.x * speed;
+        player.z -= forward.z * speed;
+    }
+
+    if(keys["a"]) {
+
+        player.x -= right.x * speed;
+        player.z -= right.z * speed;
+    }
+
+    if(keys["d"]) {
+
+        player.x += right.x * speed;
+        player.z += right.z * speed;
+    }
+
+
+    /* Gravity */
+
+    velocityY -= 0.015;
+
+    player.y += velocityY;
+
+
+    /* Ground */
+
+    if(player.y <= 4) {
+
+        player.y = 4;
+
+        velocityY = 0;
+
+        canJump = true;
+    }
+
+
+    /* World boundary */
+
+    player.x = Math.max(
+        -38,
+        Math.min(38, player.x)
+    );
+
+    player.z = Math.max(
+        -38,
+        Math.min(38, player.z)
+    );
+
+
+    camera.position.set(
+        player.x,
+        player.y,
+        player.z
+    );
+}
+
+
+/* ---------------- ANIMATION ---------------- */
+
+function animate() {
+
+    requestAnimationFrame(animate);
+
+    updatePlayer();
+
+    renderer.render(
+        scene,
+        camera
+    );
+}
+
+animate();
+
+
+/* ---------------- RESIZE ---------------- */
+
+window.addEventListener(
+    "resize",
+    function() {
+
+        camera.aspect =
+            window.innerWidth /
+            window.innerHeight;
+
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(
+            window.innerWidth,
+            window.innerHeight
+        );
+    }
+);
+
+</script>
+
+</body>
+</html>
