@@ -322,6 +322,9 @@ renderer.setPixelRatio(
     Math.min(window.devicePixelRatio, 1.5)
 );
 
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
 document.body.appendChild(
     renderer.domElement
 );
@@ -349,6 +352,19 @@ sun.position.set(
     30
 );
 
+sun.castShadow = true;
+
+sun.shadow.mapSize.width = 2048;
+sun.shadow.mapSize.height = 2048;
+
+sun.shadow.camera.near = 0.5;
+sun.shadow.camera.far = 200;
+
+sun.shadow.camera.left = -80;
+sun.shadow.camera.right = 80;
+sun.shadow.camera.top = 80;
+sun.shadow.camera.bottom = -80;
+
 scene.add(sun);
 
 
@@ -368,7 +384,8 @@ function createBlock(x, y, z, type = "grass") {
         geometry,
         materials[type] || materials.grass
     );
-
+cube.castShadow = true;
+cube.receiveShadow = true;
     cube.position.set(
         x,
         y,
