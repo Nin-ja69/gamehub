@@ -268,8 +268,14 @@ const materials = {
         color: 0x238b21,
         transparent: true,
         opacity: 0.95
-    })
-};
+    }),
+water: new THREE.MeshPhongMaterial({
+    color: 0x2196f3,
+    transparent: true,
+    opacity: 0.65,
+    shininess: 100,
+    side: THREE.DoubleSide
+})
 
 
 /* =====================================================
