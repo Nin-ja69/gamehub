@@ -413,67 +413,72 @@ function generateWorld() {
 
     clearWorld();
 
-    for (let x = -15; x <= 15; x++) {
+    const worldSize = 25;
 
-        for (let z = -15; z <= 15; z++) {
+    for (let x = -worldSize; x <= worldSize; x++) {
 
+        for (let z = -worldSize; z <= worldSize; z++) {
+
+            // Natural-looking terrain height
+            const height =
+                Math.floor(
+                    2 +
+                    Math.sin(x * 0.35) * 1.5 +
+                    Math.cos(z * 0.28) * 1.5 +
+                    Math.sin((x + z) * 0.18) * 2
+                );
+
+            // Top grass block
             createBlock(
                 x * blockSize,
-                0,
+                height * blockSize,
                 z * blockSize,
                 "grass"
             );
 
-            createBlock(
-                x * blockSize,
-                -2,
-                z * blockSize,
-                "dirt"
-            );
+            // Dirt layers
+            for (let d = 1; d <= 2; d++) {
 
-            createBlock(
-                x * blockSize,
-                -4,
-                z * blockSize,
-                "stone"
-            );
+                createBlock(
+                    x * blockSize,
+                    (height - d) * blockSize,
+                    z * blockSize,
+                    "dirt"
+                );
+            }
+
+            // Stone underground
+            for (let d = 3; d <= 5; d++) {
+
+                createBlock(
+                    x * blockSize,
+                    (height - d) * blockSize,
+                    z * blockSize,
+                    "stone"
+                );
+            }
+
+            // Random trees
+            if (
+                Math.random() < 0.035 &&
+                Math.abs(x) > 3 &&
+                Math.abs(z) > 3 &&
+                height >= 1
+            ) {
+
+                createTree(
+                    x * blockSize,
+                    z * blockSize
+                );
+            }
         }
     }
 
-    /* Small hills */
-
-    const hills = [
-        [-12, -8],
-        [-8, -12],
-        [10, -9],
-        [12, 8],
-        [-10, 10]
-    ];
-
-    hills.forEach(pos => {
-
-        createBlock(
-            pos[0],
-            2,
-            pos[1],
-            "grass"
-        );
-
-        createBlock(
-            pos[0],
-            4,
-            pos[1],
-            "grass"
-        );
-    });
-
-
-    /* Trees */
-
-    createTree(-12, -8);
-    createTree(12, -10);
-    createTree(-10, 11);
-    createTree(10, 10);
+    console.log(
+        "🌍 Procedural world generated:",
+        blocks.length,
+        "blocks"
+    );
 }
 
 
