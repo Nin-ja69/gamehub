@@ -123,6 +123,44 @@ document.addEventListener("mousedown", function(e) {
 
         block.geometry.dispose();
     }
+   document.addEventListener("contextmenu", function(e) {
+    e.preventDefault();
+});
+
+document.addEventListener("mousedown", function(e) {
+    if (document.pointerLockElement !== document.body) return;
+    if (e.button !== 2) return;
+
+    raycaster.setFromCamera(center, camera);
+
+    const hits = raycaster.intersectObjects(blocks);
+
+    if (hits.length > 0) {
+        const hit = hits[0];
+
+        const normal = hit.face.normal.clone();
+        normal.transformDirection(hit.object.matrixWorld);
+
+        const position = hit.object.position.clone();
+        position.add(normal.multiplyScalar(blockSize));
+
+        const geometry = new THREE.BoxGeometry(
+            blockSize,
+            blockSize,
+            blockSize
+        );
+
+        const material = new THREE.MeshLambertMaterial({
+            color: 0x55aa33
+        });
+
+        const newBlock = new THREE.Mesh(geometry, material);
+
+        newBlock.position.copy(position);
+
+        scene.add(newBlock);
+        blocks.push(newBlock);
+    }
 });
 const blockSize = 2;
 
