@@ -2,195 +2,167 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Block World - GameHub</title>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js"></script>
-
 <style>
-*{
-    box-sizing:border-box;
+*{box-sizing:border-box}
+
+html,body{
+ margin:0;
+ width:100%;
+ height:100%;
+ overflow:hidden;
+ background:#87ceeb;
+ font-family:Arial,sans-serif;
+ user-select:none
 }
 
-body{
-    margin:0;
-    overflow:hidden;
-    background:#87ceeb;
-    font-family:Arial,sans-serif;
-    user-select:none;
-}
+canvas{display:block}
 
-canvas{
-    display:block;
+#info,#reset,#back,#stats,#hotbar,#startScreen,#message,#crosshair{
+ position:fixed;
+ z-index:20
 }
 
 #info{
-    position:fixed;
-    top:15px;
-    left:15px;
-    z-index:20;
-    color:white;
-    background:rgba(0,0,0,.62);
-    padding:14px 17px;
-    border-radius:12px;
-    line-height:1.5;
-    font-size:14px;
-    backdrop-filter:blur(5px);
+ top:14px;
+ left:14px;
+ color:#fff;
+ background:rgba(0,0,0,.62);
+ padding:12px 15px;
+ border-radius:12px;
+ line-height:1.45;
+ backdrop-filter:blur(6px);
+ text-shadow:0 1px 2px #000
 }
 
-#info b{
-    font-size:21px;
+#info b{font-size:20px}
+
+#stats{
+ top:14px;
+ right:14px;
+ color:#fff;
+ background:rgba(0,0,0,.52);
+ padding:9px 12px;
+ border-radius:10px;
+ font-size:13px;
+ text-align:right
 }
 
 #crosshair{
-    position:fixed;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%);
-    z-index:30;
-    color:white;
-    font-size:27px;
-    font-weight:bold;
-    pointer-events:none;
-    text-shadow:0 0 5px black;
+ left:50%;
+ top:50%;
+ transform:translate(-50%,-50%);
+ color:#fff;
+ font-size:28px;
+ font-weight:bold;
+ pointer-events:none;
+ text-shadow:0 0 5px #000
 }
 
 #startScreen{
-    position:fixed;
-    inset:0;
-    z-index:100;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:rgba(10,20,30,.35);
+ inset:0;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ background:rgba(8,18,28,.42);
+ z-index:100
 }
 
 #start{
-    padding:20px 38px;
-    border:3px solid white;
-    border-radius:15px;
-    background:#6c2cff;
-    color:white;
-    font-size:23px;
-    font-weight:bold;
-    cursor:pointer;
-    box-shadow:0 10px 35px rgba(0,0,0,.4);
-    transition:.2s;
+ padding:18px 34px;
+ border:3px solid #fff;
+ border-radius:14px;
+ background:#6c2cff;
+ color:#fff;
+ font-size:22px;
+ font-weight:bold;
+ cursor:pointer;
+ box-shadow:0 10px 35px rgba(0,0,0,.4)
 }
 
-#start:hover{
-    transform:scale(1.06);
-}
+#start:hover{transform:scale(1.05)}
 
 #hotbar{
-    position:fixed;
-    left:50%;
-    bottom:20px;
-    transform:translateX(-50%);
-    z-index:40;
-    display:flex;
-    gap:6px;
-    padding:8px;
-    background:rgba(0,0,0,.65);
-    border-radius:12px;
-    backdrop-filter:blur(5px);
+ left:50%;
+ bottom:18px;
+ transform:translateX(-50%);
+ display:flex;
+ gap:5px;
+ padding:7px;
+ background:rgba(0,0,0,.65);
+ border-radius:12px;
+ backdrop-filter:blur(7px)
 }
 
 .slot{
-    width:60px;
-    height:60px;
-    border:3px solid #555;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    position:relative;
-    font-size:27px;
-    background:rgba(30,30,30,.85);
-    cursor:pointer;
-    transition:.15s;
+ width:58px;
+ height:58px;
+ border:3px solid #555;
+ border-radius:8px;
+ background:rgba(25,25,25,.9);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ position:relative;
+ cursor:pointer;
+ transition:.12s
 }
 
-.slot:hover{
-    transform:translateY(-3px);
-}
+.slot:hover{transform:translateY(-3px)}
 
 .slot.selected{
-    border-color:white;
-    box-shadow:0 0 14px white;
+ border-color:#fff;
+ box-shadow:0 0 15px #fff
 }
 
 .slot span{
-    position:absolute;
-    bottom:2px;
-    right:5px;
-    color:white;
-    font-size:12px;
-    font-weight:bold;
-}
-
-#message{
-    position:fixed;
-    left:50%;
-    top:17%;
-    transform:translateX(-50%);
-    z-index:50;
-    color:white;
-    background:rgba(0,0,0,.72);
-    padding:11px 20px;
-    border-radius:10px;
-    display:none;
-    font-weight:bold;
+ position:absolute;
+ right:4px;
+ bottom:2px;
+ color:#fff;
+ font-size:12px;
+ font-weight:bold
 }
 
 #reset{
-    position:fixed;
-    top:15px;
-    right:15px;
-    z-index:40;
-    padding:10px 15px;
-    border:0;
-    border-radius:9px;
-    background:rgba(0,0,0,.65);
-    color:white;
-    cursor:pointer;
-    font-size:14px;
-}
-
-#reset:hover{
-    background:rgba(0,0,0,.8);
+ top:70px;
+ right:14px;
+ border:0;
+ border-radius:9px;
+ padding:9px 13px;
+ background:rgba(0,0,0,.62);
+ color:#fff;
+ cursor:pointer
 }
 
 #back{
-    position:fixed;
-    bottom:20px;
-    left:20px;
-    z-index:40;
-    padding:11px 16px;
-    background:rgba(0,0,0,.65);
-    color:white;
-    text-decoration:none;
-    border-radius:9px;
+ bottom:18px;
+ left:18px;
+ padding:10px 15px;
+ border-radius:9px;
+ background:rgba(0,0,0,.62);
+ color:#fff;
+ text-decoration:none
 }
 
-@media(max-width:600px){
-    #info{
-        font-size:11px;
-    }
+#message{
+ left:50%;
+ top:16%;
+ transform:translateX(-50%);
+ display:none;
+ color:#fff;
+ background:rgba(0,0,0,.72);
+ padding:10px 18px;
+ border-radius:10px;
+ font-weight:bold
+}
 
-    #info b{
-        font-size:16px;
-    }
-
-    .slot{
-        width:46px;
-        height:46px;
-        font-size:21px;
-    }
-
-    #back{
-        display:none;
-    }
+@media(max-width:650px){
+ #info{font-size:11px}
+ .slot{width:45px;height:45px}
+ #back{display:none}
 }
 </style>
 </head>
@@ -198,1142 +170,1442 @@ canvas{
 <body>
 
 <div id="info">
-    🧱 <b>Block World</b><br>
-    WASD = Move<br>
-    SPACE = Jump<br>
-    Mouse = Look<br>
-    Left Click = Break<br>
-    Right Click = Place<br>
-    1-5 = Select Block
+<b>🧱 Block World</b><br>
+WASD = Move &nbsp; SPACE = Jump<br>
+Mouse = Look &nbsp; Shift = Sprint<br>
+Left Click = Break &nbsp; Right Click = Place<br>
+1-8 = Select Block &nbsp; ESC = Pause
 </div>
+
+<div id="stats">Blocks: 0<br>Time: Day</div>
 
 <div id="crosshair">+</div>
 
 <div id="startScreen">
-    <button id="start">▶ CLICK TO PLAY</button>
+<button id="start">▶ CLICK TO PLAY</button>
 </div>
 
 <div id="message"></div>
 
-<button id="reset">↻ Reset World</button>
+<button id="reset">↻ New World</button>
 
-<div id="hotbar">
-    <div class="slot selected" data-type="grass">🌿<span>1</span></div>
-    <div class="slot" data-type="dirt">🟫<span>2</span></div>
-    <div class="slot" data-type="stone">⬜<span>3</span></div>
-    <div class="slot" data-type="wood">🪵<span>4</span></div>
-    <div class="slot" data-type="leaves">🍃<span>5</span></div>
-</div>
+<div id="hotbar"></div>
 
 <a id="back" href="index.html">⬅ GameHub</a>
 
-<script>
+<script type="module">
 
-/* =====================================================
-   GAME SETUP
-   ===================================================== */
+import * as THREE from
+"https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.module.js";
 
-const scene = new THREE.Scene();
 
-scene.background = new THREE.Color(0x87ceeb);
+const BLOCK=2;
+const WORLD=28;
+const WATER_LEVEL=1;
 
-scene.fog = new THREE.Fog(
-    0x87ceeb,
-    45,
-    150
+const blocks=[];
+const blockMap=new Map();
+const keys={};
+
+let selected="grass";
+let started=false;
+let paused=false;
+let velocityY=0;
+let canJump=false;
+
+let yaw=0;
+let pitch=0;
+let time=0;
+let messageTimer=0;
+
+
+const player={
+ x:0,
+ y:6,
+ z:10,
+ height:3.6,
+ speed:0.11
+};
+
+
+const raycaster=new THREE.Raycaster();
+const center=new THREE.Vector2(0,0);
+
+
+const scene=new THREE.Scene();
+
+scene.background=new THREE.Color(0x87ceeb);
+
+scene.fog=new THREE.Fog(
+ 0x87ceeb,
+ 45,
+ 135
 );
 
-const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    300
+
+const camera=new THREE.PerspectiveCamera(
+ 75,
+ innerWidth/innerHeight,
+ .1,
+ 260
 );
 
-const renderer = new THREE.WebGLRenderer({
-    antialias:true
+camera.rotation.order="YXZ";
+
+
+const renderer=new THREE.WebGLRenderer({
+ antialias:true
 });
 
 renderer.setSize(
-    window.innerWidth,
-    window.innerHeight
+ innerWidth,
+ innerHeight
 );
 
 renderer.setPixelRatio(
-    Math.min(window.devicePixelRatio,1.5)
+ Math.min(devicePixelRatio,1.35)
 );
 
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.enabled=true;
 
-document.body.appendChild(renderer.domElement);
+renderer.shadowMap.type=
+ THREE.PCFSoftShadowMap;
 
+renderer.outputColorSpace=
+ THREE.SRGBColorSpace;
 
-/* =====================================================
-   LIGHTING
-   ===================================================== */
-
-const ambient = new THREE.HemisphereLight(
-    0xffffff,
-    0x557755,
-    1.15
+document.body.appendChild(
+ renderer.domElement
 );
 
-scene.add(ambient);
 
-const sun = new THREE.DirectionalLight(
-    0xffffff,
-    1.7
+scene.add(
+ new THREE.HemisphereLight(
+  0xbfeaff,
+  0x40552f,
+  1.25
+ )
 );
 
-sun.position.set(40,80,30);
 
-sun.castShadow = true;
+const sun=
+ new THREE.DirectionalLight(
+  0xffffff,
+  1.8
+ );
 
-sun.shadow.mapSize.width = 1024;
-sun.shadow.mapSize.height = 1024;
+sun.position.set(
+ 40,
+ 80,
+ 25
+);
 
-sun.shadow.camera.left = -80;
-sun.shadow.camera.right = 80;
-sun.shadow.camera.top = 80;
-sun.shadow.camera.bottom = -80;
+sun.castShadow=true;
+
+sun.shadow.mapSize.set(
+ 1024,
+ 1024
+);
+
+sun.shadow.camera.left=-80;
+sun.shadow.camera.right=80;
+sun.shadow.camera.top=80;
+sun.shadow.camera.bottom=-80;
 
 scene.add(sun);
 
 
-/* =====================================================
-   BLOCKS
-   ===================================================== */
+const sky=
+ new THREE.Mesh(
+  new THREE.SphereGeometry(
+   180,
+   24,
+   16
+  ),
+  new THREE.MeshBasicMaterial({
+   color:0x87ceeb,
+   side:THREE.BackSide
+  })
+ );
 
-const blockSize = 2;
-const blocks = [];
+scene.add(sky);
 
-const materials = {
 
-    grass:new THREE.MeshLambertMaterial({
-        color:0x4caf32
-    }),
+function texture(color,detail="#00000000"){
 
-    dirt:new THREE.MeshLambertMaterial({
-        color:0x8b5a2b
-    }),
+ const c=
+ document.createElement("canvas");
 
-    stone:new THREE.MeshLambertMaterial({
-        color:0x777777
-    }),
+ c.width=16;
+ c.height=16;
 
-    wood:new THREE.MeshLambertMaterial({
-        color:0x704214
-    }),
+ const x=c.getContext("2d");
 
-    leaves:new THREE.MeshLambertMaterial({
-        color:0x238b21,
-        transparent:true,
-        opacity:.92
-    })
+ x.fillStyle=color;
+ x.fillRect(
+  0,
+  0,
+  16,
+  16
+ );
+
+ x.globalAlpha=.18;
+
+ for(let i=0;i<30;i++){
+
+  x.fillStyle=detail;
+
+  x.fillRect(
+   Math.random()*16,
+   Math.random()*16,
+   1+Math.random()*2,
+   1+Math.random()*2
+  );
+
+ }
+
+ const t=
+ new THREE.CanvasTexture(c);
+
+ t.magFilter=
+ THREE.NearestFilter;
+
+ t.minFilter=
+ THREE.NearestFilter;
+
+ return t;
+}
+
+
+const tex={
+
+ grass:texture(
+  "#58a936",
+  "#173d16"
+ ),
+
+ dirt:texture(
+  "#8b5a2b",
+  "#4d2e18"
+ ),
+
+ stone:texture(
+  "#888",
+  "#444"
+ ),
+
+ wood:texture(
+  "#70451f",
+  "#3d2411"
+ ),
+
+ leaves:texture(
+  "#2e8f2d",
+  "#124f16"
+ ),
+
+ sand:texture(
+  "#d9c27a",
+  "#8f7b42"
+ ),
+
+ glass:texture(
+  "#bdefff",
+  "#ffffff"
+ ),
+
+ water:texture(
+  "#268fd0",
+  "#0d4f87"
+ )
+
 };
 
 
-/* =====================================================
-   CREATE BLOCK
-   ===================================================== */
+const mats={
 
-function createBlock(x,y,z,type="grass"){
+ grass:
+ new THREE.MeshLambertMaterial({
+  map:tex.grass
+ }),
 
-    const geometry = new THREE.BoxGeometry(
-        blockSize,
-        blockSize,
-        blockSize
-    );
+ dirt:
+ new THREE.MeshLambertMaterial({
+  map:tex.dirt
+ }),
 
-    const cube = new THREE.Mesh(
-        geometry,
-        materials[type] || materials.grass
-    );
+ stone:
+ new THREE.MeshLambertMaterial({
+  map:tex.stone
+ }),
 
-    cube.position.set(x,y,z);
+ wood:
+ new THREE.MeshLambertMaterial({
+  map:tex.wood
+ }),
 
-    cube.userData.type = type;
+ leaves:
+ new THREE.MeshLambertMaterial({
+  map:tex.leaves,
+  transparent:true,
+  opacity:.9
+ }),
 
-    cube.castShadow = true;
-    cube.receiveShadow = true;
+ sand:
+ new THREE.MeshLambertMaterial({
+  map:tex.sand
+ }),
 
-    scene.add(cube);
+ glass:
+ new THREE.MeshLambertMaterial({
+  map:tex.glass,
+  transparent:true,
+  opacity:.45
+ }),
 
-    blocks.push(cube);
+ water:
+ new THREE.MeshLambertMaterial({
+  map:tex.water,
+  transparent:true,
+  opacity:.58,
+  depthWrite:false
+ })
 
-    return cube;
+};
+
+
+const types=[
+ "grass",
+ "dirt",
+ "stone",
+ "wood",
+ "leaves",
+ "sand",
+ "glass",
+ "water"
+];
+
+
+function key(x,y,z){
+
+ return x+","+y+","+z;
+
 }
 
 
-/* =====================================================
-   REMOVE BLOCK
-   ===================================================== */
+function has(x,y,z){
 
-function removeBlock(block){
+ return blockMap.has(
+  key(x,y,z)
+ );
 
-    const index = blocks.indexOf(block);
-
-    if(index !== -1){
-        blocks.splice(index,1);
-    }
-
-    scene.remove(block);
-
-    if(block.geometry){
-        block.geometry.dispose();
-    }
 }
 
 
-/* =====================================================
-   CLEAR WORLD
-   ===================================================== */
+function createBlock(
+ x,
+ y,
+ z,
+ type
+){
 
-function clearWorld(){
+ if(has(x,y,z))
+  return null;
 
-    while(blocks.length){
+ const g=
+ new THREE.BoxGeometry(
+  BLOCK,
+  BLOCK,
+  BLOCK
+ );
 
-        const block = blocks.pop();
+ const m=
+ new THREE.Mesh(
+  g,
+  mats[type] || mats.grass
+ );
 
-        scene.remove(block);
+ m.position.set(
+  x,
+  y,
+  z
+ );
 
-        if(block.geometry){
-            block.geometry.dispose();
-        }
-    }
+ m.userData={
+  type,
+  x,
+  y,
+  z
+ };
+
+ m.castShadow=
+  type!=="water";
+
+ m.receiveShadow=true;
+
+ scene.add(m);
+
+ blocks.push(m);
+
+ blockMap.set(
+  key(x,y,z),
+  m
+ );
+
+ return m;
+
 }
 
 
-/* =====================================================
-   TREES
-   ===================================================== */
+function removeBlock(m){
 
-function createTree(x,z){
+ if(!m)
+  return;
 
-    for(let y=1;y<=4;y++){
+ const p=m.userData;
 
-        createBlock(
-            x,
-            y*blockSize,
-            z,
-            "wood"
-        );
-    }
+ blockMap.delete(
+  key(
+   p.x,
+   p.y,
+   p.z
+  )
+ );
 
-    for(let dx=-2;dx<=2;dx++){
+ const i=
+ blocks.indexOf(m);
 
-        for(let dz=-2;dz<=2;dz++){
+ if(i>=0)
+  blocks.splice(i,1);
 
-            if(
-                Math.abs(dx)+Math.abs(dz)<=3
-            ){
+ scene.remove(m);
 
-                createBlock(
-                    x+dx*blockSize,
-                    10,
-                    z+dz*blockSize,
-                    "leaves"
-                );
-            }
-        }
-    }
+ m.geometry.dispose();
+
 }
 
 
-/* =====================================================
-   WORLD
-   ===================================================== */
+function heightAt(x,z){
+
+ return Math.max(
+  0,
+  Math.floor(
+   2
+   +Math.sin(x*.38)*1.5
+   +Math.cos(z*.31)*1.2
+   +Math.sin((x+z)*.16)*1.3
+  )
+ );
+
+}
+
+
+function tree(gx,gz,base){
+
+ for(let y=0;y<4;y++){
+
+  createBlock(
+   gx,
+   (base+y)*BLOCK,
+   gz,
+   "wood"
+  );
+
+ }
+
+
+ for(
+  let dx=-2;
+  dx<=2;
+  dx++
+ ){
+
+  for(
+   let dz=-2;
+   dz<=2;
+   dz++
+  ){
+
+   for(
+    let dy=3;
+    dy<=4;
+    dy++
+   ){
+
+    if(
+     Math.abs(dx)
+     +Math.abs(dz)
+     +(dy===4?1:0)
+     <=3
+    ){
+
+     createBlock(
+      gx+dx*BLOCK,
+      (base+dy)*BLOCK,
+      gz+dz*BLOCK,
+      "leaves"
+     );
+
+    }
+
+   }
+
+  }
+
+ }
+
+}
+
 
 function generateWorld(){
 
-    clearWorld();
-
-    for(let x=-25;x<=25;x++){
-
-        for(let z=-25;z<=25;z++){
-
-            let height = 0;
-
-            const wave =
-                Math.sin(x*.35) +
-                Math.cos(z*.32);
-
-            if(wave > 1.0){
-                height = 2;
-            }
-
-            if(wave > 1.6){
-                height = 4;
-            }
-
-            createBlock(
-                x*blockSize,
-                height,
-                z*blockSize,
-                "grass"
-            );
-
-            createBlock(
-                x*blockSize,
-                height-2,
-                z*blockSize,
-                "dirt"
-            );
-
-            createBlock(
-                x*blockSize,
-                height-4,
-                z*blockSize,
-                "stone"
-            );
-        }
-    }
-
-    /* TREES */
-
-    createTree(-20,-15);
-    createTree(-12,-8);
-    createTree(18,-12);
-    createTree(20,14);
-    createTree(-18,18);
-    createTree(5,17);
-    createTree(-5,-20);
-
-    /* EXTRA ROCKS */
-
-    for(let i=0;i<18;i++){
-
-        const x =
-            Math.floor(Math.random()*40-20)*2;
-
-        const z =
-            Math.floor(Math.random()*40-20)*2;
-
-        createBlock(
-            x,
-            3,
-            z,
-            "stone"
-        );
-    }
-}
-
-
-/* =====================================================
-   WATER
-   ===================================================== */
-
-const waterGeometry =
-    new THREE.PlaneGeometry(
-        34,
-        26,
-        20,
-        20
-    );
-
-const waterMaterial =
-    new THREE.MeshPhongMaterial({
-
-        color:0x2196d3,
-
-        transparent:true,
-
-        opacity:.62,
-
-        shininess:100,
-
-        side:THREE.DoubleSide
-    });
-
-const water =
-    new THREE.Mesh(
-        waterGeometry,
-        waterMaterial
-    );
-
-water.rotation.x = -Math.PI/2;
-
-water.position.set(
-    0,
-    1.15,
-    -13
-);
-
-water.receiveShadow = true;
-
-scene.add(water);
-
-
-/* =====================================================
-   CLOUDS
-   ===================================================== */
-
-function createCloud(x,y,z){
-
-    const cloudMaterial =
-        new THREE.MeshLambertMaterial({
-            color:0xffffff,
-            transparent:true,
-            opacity:.88
-        });
-
-    const cloud = new THREE.Group();
-
-    for(let i=0;i<5;i++){
-
-        const size =
-            3 + Math.random()*3;
-
-        const geometry =
-            new THREE.SphereGeometry(
-                size,
-                12,
-                12
-            );
-
-        const part =
-            new THREE.Mesh(
-                geometry,
-                cloudMaterial
-            );
-
-        part.position.set(
-            i*3,
-            Math.random()*1.5,
-            Math.random()*2
-        );
-
-        cloud.add(part);
-    }
-
-    cloud.position.set(x,y,z);
-
-    scene.add(cloud);
-}
-
-createCloud(-35,30,-30);
-createCloud(5,35,-40);
-createCloud(35,28,-20);
-createCloud(-5,32,25);
-
-
-/* =====================================================
-   PLAYER
-   ===================================================== */
-
-const player = {
-
-    x:0,
-
-    y:5,
-
-    z:8,
-
-    speed:.18,
-
-    height:3.5
-};
-
-let velocityY = 0;
-
-let canJump = true;
-
-let yaw = 0;
-
-let pitch = 0;
-
-let gameStarted = false;
-
-const keys = {};
-
-camera.position.set(
-    player.x,
-    player.y,
-    player.z
-);
-
-
-/* =====================================================
-   RAYCAST
-   ===================================================== */
-
-const raycaster =
-    new THREE.Raycaster();
-
-const center =
-    new THREE.Vector2(0,0);
-
-
-/* =====================================================
-   HOTBAR
-   ===================================================== */
-
-let selectedType = "grass";
-
-function updateHotbar(){
-
-    document
-    .querySelectorAll(".slot")
-    .forEach(slot=>{
-
-        slot.classList.remove(
-            "selected"
-        );
-
-        if(
-            slot.dataset.type ===
-            selectedType
-        ){
-
-            slot.classList.add(
-                "selected"
-            );
-        }
-    });
-}
-
-document
-.querySelectorAll(".slot")
-.forEach(slot=>{
-
-    slot.addEventListener(
-        "click",
-        function(){
-
-            selectedType =
-                this.dataset.type;
-
-            updateHotbar();
-        }
-    );
-});
-
-
-/* =====================================================
-   MESSAGE
-   ===================================================== */
-
-let messageTimer;
-
-function showMessage(text){
-
-    const message =
-        document.getElementById(
-            "message"
-        );
-
-    message.textContent = text;
-
-    message.style.display = "block";
-
-    clearTimeout(messageTimer);
-
-    messageTimer =
-        setTimeout(()=>{
-
-            message.style.display =
-                "none";
-
-        },1000);
-}
-
-
-/* =====================================================
-   BREAK BLOCK
-   ===================================================== */
-
-function breakBlock(){
-
-    if(!gameStarted) return;
-
-    raycaster.setFromCamera(
-        center,
-        camera
-    );
-
-    const hits =
-        raycaster.intersectObjects(
-            blocks
-        );
-
-    if(!hits.length) return;
-
-    const hit = hits[0];
-
-    if(hit.distance > 10) return;
-
-    removeBlock(hit.object);
-
-    saveWorld();
-
-    showMessage("Block broken!");
-}
-
-
-/* =====================================================
-   PLACE BLOCK
-   ===================================================== */
-
-function placeBlock(){
-
-    if(!gameStarted) return;
-
-    raycaster.setFromCamera(
-        center,
-        camera
-    );
-
-    const hits =
-        raycaster.intersectObjects(
-            blocks
-        );
-
-    if(!hits.length) return;
-
-    const hit = hits[0];
-
-    if(hit.distance > 10) return;
-
-    const normal =
-        hit.face.normal.clone();
-
-    normal.transformDirection(
-        hit.object.matrixWorld
-    );
-
-    const position =
-        hit.object.position.clone();
-
-    position.add(
-        normal.multiplyScalar(
-            blockSize
-        )
-    );
-
-    const dx =
-        position.x-player.x;
-
-    const dy =
-        position.y-player.y;
-
-    const dz =
-        position.z-player.z;
-
-    if(
-        Math.abs(dx)<1.8 &&
-        Math.abs(dy)<2.5 &&
-        Math.abs(dz)<1.8
-    ){
-
-        showMessage(
-            "Can't place here!"
-        );
-
-        return;
-    }
-
-    const exists =
-        blocks.some(block=>{
-
-            return(
-                Math.abs(
-                    block.position.x-
-                    position.x
-                )<.01 &&
-
-                Math.abs(
-                    block.position.y-
-                    position.y
-                )<.01 &&
-
-                Math.abs(
-                    block.position.z-
-                    position.z
-                )<.01
-            );
-        });
-
-    if(exists) return;
+ while(blocks.length)
+  removeBlock(
+   blocks[0]
+  );
+
+
+ for(
+  let x=-WORLD;
+  x<=WORLD;
+  x++
+ ){
+
+  for(
+   let z=-WORLD;
+   z<=WORLD;
+   z++
+  ){
+
+   const h=
+    heightAt(x,z);
+
+
+   for(
+    let y=0;
+    y<=h;
+    y++
+   ){
+
+    const type=
+     y===h
+      ? "grass"
+      : y>h-3
+       ? "dirt"
+       : "stone";
 
     createBlock(
-        Math.round(
-            position.x/blockSize
-        )*blockSize,
-
-        Math.round(
-            position.y/blockSize
-        )*blockSize,
-
-        Math.round(
-            position.z/blockSize
-        )*blockSize,
-
-        selectedType
+     x*BLOCK,
+     y*BLOCK,
+     z*BLOCK,
+     type
     );
 
-    saveWorld();
+   }
 
-    showMessage(
-        selectedType.toUpperCase()+
-        " placed!"
+
+   if(h<=1){
+
+    createBlock(
+     x*BLOCK,
+     (h+1)*BLOCK,
+     z*BLOCK,
+     "sand"
     );
+
+   }
+
+  }
+
+ }
+
+
+ const trees=[
+  [-18,-14],
+  [-10,8],
+  [4,-17],
+  [15,-8],
+  [18,14],
+  [-20,15],
+  [8,12]
+ ];
+
+
+ trees.forEach(
+  ([x,z])=>
+   tree(
+    x*BLOCK,
+    z*BLOCK,
+    heightAt(x,z)+1
+   )
+ );
+
+
+ for(
+  let x=-WORLD;
+  x<=WORLD;
+  x++
+ ){
+
+  for(
+   let z=-WORLD;
+   z<=WORLD;
+   z++
+  ){
+
+   const h=
+    heightAt(x,z);
+
+   if(h<1){
+
+    createBlock(
+     x*BLOCK,
+     (WATER_LEVEL+1)*BLOCK,
+     z*BLOCK,
+     "water"
+    );
+
+   }
+
+  }
+
+ }
+
+
+ saveWorld();
+ updateStats();
+
 }
 
-
-/* =====================================================
-   MOUSE
-   ===================================================== */
-
-document.addEventListener(
-    "mousedown",
-    function(e){
-
-        if(!gameStarted) return;
-
-        if(
-            document.pointerLockElement !==
-            renderer.domElement
-        ){
-            return;
-        }
-
-        if(e.button===0){
-            breakBlock();
-        }
-
-        if(e.button===2){
-            placeBlock();
-        }
-    }
-);
-
-
-/* =====================================================
-   RIGHT CLICK DISABLE
-   ===================================================== */
-
-document.addEventListener(
-    "contextmenu",
-    function(e){
-        e.preventDefault();
-    }
-);
-
-
-/* =====================================================
-   KEYBOARD
-   ===================================================== */
-
-document.addEventListener(
-    "keydown",
-    function(e){
-
-        keys[
-            e.key.toLowerCase()
-        ] = true;
-
-        if(e.code==="Space"){
-
-            e.preventDefault();
-
-            if(canJump){
-
-                velocityY=.42;
-
-                canJump=false;
-            }
-        }
-
-        if(
-            e.key>="1" &&
-            e.key<="5"
-        ){
-
-            const types=[
-                "grass",
-                "dirt",
-                "stone",
-                "wood",
-                "leaves"
-            ];
-
-            selectedType =
-                types[
-                    Number(e.key)-1
-                ];
-
-            updateHotbar();
-
-            showMessage(
-                selectedType.toUpperCase()
-            );
-        }
-    }
-);
-
-document.addEventListener(
-    "keyup",
-    function(e){
-
-        keys[
-            e.key.toLowerCase()
-        ] = false;
-    }
-);
-
-
-/* =====================================================
-   MOUSE LOOK
-   ===================================================== */
-
-document.addEventListener(
-    "mousemove",
-    function(e){
-
-        if(
-            document.pointerLockElement !==
-            renderer.domElement
-        ){
-            return;
-        }
-
-        yaw -=
-            e.movementX*.002;
-
-        pitch -=
-            e.movementY*.002;
-
-        pitch =
-            Math.max(
-                -Math.PI/2+.05,
-                Math.min(
-                    Math.PI/2-.05,
-                    pitch
-                )
-            );
-
-        camera.rotation.order =
-            "YXZ";
-
-        camera.rotation.y =
-            yaw;
-
-        camera.rotation.x =
-            pitch;
-    }
-);
-
-
-/* =====================================================
-   START
-   ===================================================== */
-
-document
-.getElementById("start")
-.addEventListener(
-    "click",
-    function(){
-
-        gameStarted=true;
-
-        document
-        .getElementById(
-            "startScreen"
-        )
-        .style.display="none";
-
-        renderer.domElement
-        .requestPointerLock();
-    }
-);
-
-
-/* =====================================================
-   POINTER LOCK
-   ===================================================== */
-
-document.addEventListener(
-    "pointerlockchange",
-    function(){
-
-        if(
-            document.pointerLockElement !==
-            renderer.domElement
-        ){
-
-            if(gameStarted){
-
-                document
-                .getElementById(
-                    "startScreen"
-                )
-                .style.display="flex";
-            }
-        }
-    }
-);
-
-
-/* =====================================================
-   PLAYER MOVEMENT
-   ===================================================== */
-
-function updatePlayer(){
-
-    if(!gameStarted) return;
-
-    const speed =
-        player.speed;
-
-    const forward =
-        new THREE.Vector3(
-            -Math.sin(yaw),
-            0,
-            -Math.cos(yaw)
-        );
-
-    const right =
-        new THREE.Vector3(
-            Math.cos(yaw),
-            0,
-            -Math.sin(yaw)
-        );
-
-    if(keys["w"]){
-
-        player.x +=
-            forward.x*speed;
-
-        player.z +=
-            forward.z*speed;
-    }
-
-    if(keys["s"]){
-
-        player.x -=
-            forward.x*speed;
-
-        player.z -=
-            forward.z*speed;
-    }
-
-    if(keys["a"]){
-
-        player.x -=
-            right.x*speed;
-
-        player.z -=
-            right.z*speed;
-    }
-
-    if(keys["d"]){
-
-        player.x +=
-            right.x*speed;
-
-        player.z +=
-            right.z*speed;
-    }
-
-    /* GRAVITY */
-
-    velocityY -= .018;
-
-    player.y +=
-        velocityY;
-
-    /* GROUND */
-
-    if(player.y<=4.5){
-
-        player.y=4.5;
-
-        velocityY=0;
-
-        canJump=true;
-    }
-
-    /* WORLD LIMIT */
-
-    player.x =
-        THREE.MathUtils.clamp(
-            player.x,
-            -48,
-            48
-        );
-
-    player.z =
-        THREE.MathUtils.clamp(
-            player.z,
-            -48,
-            48
-        );
-
-    camera.position.set(
-        player.x,
-        player.y,
-        player.z
-    );
-}
-
-
-/* =====================================================
-   SAVE
-   ===================================================== */
 
 function saveWorld(){
 
-    const data =
-        blocks.map(block=>({
+ const data=
+  blocks.map(
+   m=>m.userData
+  );
 
-            x:block.position.x,
+ localStorage.setItem(
+  "blockWorldMaxSave",
+  JSON.stringify(data)
+ );
 
-            y:block.position.y,
-
-            z:block.position.z,
-
-            type:block.userData.type
-        }));
-
-    localStorage.setItem(
-        "blockWorldSave",
-        JSON.stringify(data)
-    );
 }
 
-
-/* =====================================================
-   LOAD
-   ===================================================== */
 
 function loadWorld(){
 
-    const saved =
-        localStorage.getItem(
-            "blockWorldSave"
-        );
+ const raw=
+  localStorage.getItem(
+   "blockWorldMaxSave"
+  );
 
-    if(!saved){
+ if(!raw){
 
-        generateWorld();
+  generateWorld();
+  return;
 
-        return;
-    }
+ }
 
-    try{
+ try{
 
-        const data =
-            JSON.parse(saved);
+  const data=
+   JSON.parse(raw);
 
-        clearWorld();
+  data.forEach(
+   p=>
+    createBlock(
+     p.x,
+     p.y,
+     p.z,
+     p.type
+    )
+  );
 
-        data.forEach(block=>{
+  updateStats();
 
-            createBlock(
-                block.x,
-                block.y,
-                block.z,
-                block.type
-            );
-        });
+ }catch(e){
 
-    }catch(error){
+  localStorage.removeItem(
+   "blockWorldMaxSave"
+  );
 
-        console.error(
-            "Save load error:",
-            error
-        );
+  generateWorld();
 
-        generateWorld();
-    }
+ }
+
 }
 
 
-/* =====================================================
-   RESET
-   ===================================================== */
+function solidForCollision(
+ x,
+ y,
+ z
+){
 
-document
-.getElementById("reset")
-.addEventListener(
-    "click",
-    function(){
+ const m=
+  blockMap.get(
+   key(x,y,z)
+  );
 
-        if(
-            !confirm(
-                "Reset your Block World?"
-            )
-        ){
-            return;
-        }
+ return m
+  && m.userData.type!=="water"
+  && m.userData.type!=="leaves";
 
-        localStorage.removeItem(
-            "blockWorldSave"
-        );
+}
 
-        generateWorld();
 
-        player.x=0;
-        player.y=5;
-        player.z=8;
+function groundY(px,pz){
 
-        yaw=0;
-        pitch=0;
+ const gx=
+  Math.round(px/BLOCK);
 
-        showMessage(
-            "World reset!"
-        );
-    }
+ const gz=
+  Math.round(pz/BLOCK);
+
+ let best=-Infinity;
+
+ for(
+  let y=-1;
+  y<20;
+  y++
+ ){
+
+  if(
+   solidForCollision(
+    gx*BLOCK,
+    y*BLOCK,
+    gz*BLOCK
+   )
+  ){
+
+   best=
+    Math.max(
+     best,
+     y*BLOCK+BLOCK/2
+    );
+
+  }
+
+ }
+
+ return best;
+
+}
+
+
+function updatePlayer(){
+
+ if(!started || paused)
+  return;
+
+
+ const speed=
+  keys.shift
+   ? .18
+   : player.speed;
+
+
+ const forward=
+  new THREE.Vector3(
+   -Math.sin(yaw),
+   0,
+   -Math.cos(yaw)
+  );
+
+
+ const right=
+  new THREE.Vector3(
+   Math.cos(yaw),
+   0,
+   -Math.sin(yaw)
+  );
+
+
+ let dx=0;
+ let dz=0;
+
+
+ if(keys.w){
+
+  dx+=forward.x;
+  dz+=forward.z;
+
+ }
+
+ if(keys.s){
+
+  dx-=forward.x;
+  dz-=forward.z;
+
+ }
+
+ if(keys.a){
+
+  dx-=right.x;
+  dz-=right.z;
+
+ }
+
+ if(keys.d){
+
+  dx+=right.x;
+  dz+=right.z;
+
+ }
+
+
+ const len=
+  Math.hypot(dx,dz)
+  ||1;
+
+
+ if(dx||dz){
+
+  dx/=len;
+  dz/=len;
+
+ }
+
+
+ const nx=
+  player.x+dx*speed;
+
+ const nz=
+  player.z+dz*speed;
+
+
+ const gy=
+  groundY(nx,nz);
+
+
+ if(
+  gy>-Infinity
+  &&
+  player.y-1.8<=gy+1.05
+ ){
+
+  player.y=
+   gy+3.7;
+
+ }else{
+
+  player.x=nx;
+  player.z=nz;
+
+ }
+
+
+ velocityY-=.018;
+
+ player.y+=velocityY;
+
+
+ const g=
+  groundY(
+   player.x,
+   player.z
+  );
+
+
+ if(
+  g>-Infinity
+  &&
+  player.y<=g+3.7
+ ){
+
+  player.y=
+   g+3.7;
+
+  velocityY=0;
+
+  canJump=true;
+
+ }
+
+
+ player.x=
+  THREE.MathUtils.clamp(
+   player.x,
+   -WORLD*BLOCK,
+   WORLD*BLOCK
+  );
+
+
+ player.z=
+  THREE.MathUtils.clamp(
+   player.z,
+   -WORLD*BLOCK,
+   WORLD*BLOCK
+  );
+
+
+ camera.position.set(
+  player.x,
+  player.y,
+  player.z
+ );
+
+}
+
+
+function breakBlock(){
+
+ raycaster.setFromCamera(
+  center,
+  camera
+ );
+
+ const hit=
+  raycaster.intersectObjects(
+   blocks,
+   false
+  )[0];
+
+
+ if(!hit ||
+    hit.distance>10)
+  return;
+
+
+ if(
+  hit.object.userData.type
+  ==="water"
+ ){
+
+  show(
+   "Water can't be mined"
+  );
+
+  return;
+
+ }
+
+
+ removeBlock(
+  hit.object
+ );
+
+ saveWorld();
+
+ updateStats();
+
+ show(
+  "Block broken!"
+ );
+
+}
+
+
+function placeBlock(){
+
+ raycaster.setFromCamera(
+  center,
+  camera
+ );
+
+ const hit=
+  raycaster.intersectObjects(
+   blocks,
+   false
+  )[0];
+
+
+ if(!hit ||
+    hit.distance>10)
+  return;
+
+
+ const n=
+  hit.face.normal
+   .clone()
+   .transformDirection(
+    hit.object.matrixWorld
+   );
+
+
+ const p=
+  hit.object.position
+   .clone()
+   .add(
+    n.multiplyScalar(BLOCK)
+   );
+
+
+ const x=
+  Math.round(p.x/BLOCK)*BLOCK;
+
+ const y=
+  Math.round(p.y/BLOCK)*BLOCK;
+
+ const z=
+  Math.round(p.z/BLOCK)*BLOCK;
+
+
+ if(
+  Math.abs(x-player.x)<1.7
+  &&
+  Math.abs(z-player.z)<1.7
+  &&
+  Math.abs(y-player.y)<3.5
+ ){
+
+  show(
+   "Can't place here"
+  );
+
+  return;
+
+ }
+
+
+ if(has(x,y,z))
+  return;
+
+
+ createBlock(
+  x,
+  y,
+  z,
+  selected
+ );
+
+ saveWorld();
+
+ updateStats();
+
+ show(
+  selected+" placed"
+ );
+
+}
+
+
+function show(t){
+
+ const el=
+  document.getElementById(
+   "message"
+  );
+
+ el.textContent=t;
+
+ el.style.display=
+  "block";
+
+ clearTimeout(
+  messageTimer
+ );
+
+ messageTimer=
+  setTimeout(
+   ()=>{
+    el.style.display=
+     "none";
+   },
+   850
+  );
+
+}
+
+
+function updateStats(){
+
+ document.getElementById(
+  "stats"
+ ).innerHTML=
+  `Blocks: ${blocks.length}<br>
+   Time: ${time<.5?"Day":"Night"}`;
+
+}
+
+
+function select(t){
+
+ selected=t;
+
+ document
+  .querySelectorAll(".slot")
+  .forEach(
+   s=>
+    s.classList.toggle(
+     "selected",
+     s.dataset.type===t
+    )
+  );
+
+ show(
+  t.toUpperCase()
+ );
+
+}
+
+
+function makeHotbar(){
+
+ const bar=
+  document.getElementById(
+   "hotbar"
+  );
+
+
+ types.forEach(
+  (t,i)=>{
+
+   const s=
+    document.createElement(
+     "div"
+    );
+
+   s.className=
+    "slot"+
+    (i===0
+     ?" selected"
+     :"");
+
+   s.dataset.type=t;
+
+
+   const icon=
+    document.createElement(
+     "div"
+    );
+
+
+   icon.textContent={
+    grass:"🌿",
+    dirt:"🟫",
+    stone:"⬜",
+    wood:"🪵",
+    leaves:"🍃",
+    sand:"🟨",
+    glass:"🔷",
+    water:"💧"
+   }[t];
+
+
+   icon.style.fontSize=
+    "25px";
+
+
+   s.append(icon);
+
+
+   const n=
+    document.createElement(
+     "span"
+    );
+
+   n.textContent=i+1;
+
+   s.append(n);
+
+
+   s.onclick=
+    ()=>select(t);
+
+
+   bar.append(s);
+
+  }
+ );
+
+}
+
+
+document.addEventListener(
+ "keydown",
+ e=>{
+
+  keys[
+   e.key.toLowerCase()
+  ]=true;
+
+
+  if(e.code==="Space"){
+
+   e.preventDefault();
+
+   if(canJump){
+
+    velocityY=.42;
+
+    canJump=false;
+
+   }
+
+  }
+
+
+  if(
+   e.key>="1"
+   &&
+   e.key<="8"
+  ){
+
+   select(
+    types[
+     Number(e.key)-1
+    ]
+   );
+
+  }
+
+
+  if(
+   e.code==="Escape"
+   &&
+   started
+  ){
+
+   paused=true;
+
+   document
+    .getElementById(
+     "startScreen"
+    )
+    .style.display="flex";
+
+  }
+
+ }
 );
 
 
-/* =====================================================
-   RESIZE
-   ===================================================== */
-
-window.addEventListener(
-    "resize",
-    function(){
-
-        camera.aspect =
-            window.innerWidth/
-            window.innerHeight;
-
-        camera.updateProjectionMatrix();
-
-        renderer.setSize(
-            window.innerWidth,
-            window.innerHeight
-        );
-    }
+document.addEventListener(
+ "keyup",
+ e=>{
+  keys[
+   e.key.toLowerCase()
+  ]=false;
+ }
 );
 
 
-/* =====================================================
-   START WORLD
-   ===================================================== */
+document.addEventListener(
+ "mousemove",
+ e=>{
 
-loadWorld();
+  if(
+   document.pointerLockElement
+   !==renderer.domElement
+   ||
+   paused
+  )
+   return;
 
 
-/* =====================================================
-   GAME LOOP
-   ===================================================== */
+  yaw-=
+   e.movementX*.0022;
+
+  pitch-=
+   e.movementY*.0022;
+
+
+  pitch=
+   THREE.MathUtils.clamp(
+    pitch,
+    -Math.PI/2+.05,
+    Math.PI/2-.05
+   );
+
+
+  camera.rotation.y=
+   yaw;
+
+  camera.rotation.x=
+   pitch;
+
+ }
+);
+
+
+document.addEventListener(
+ "mousedown",
+ e=>{
+
+  if(
+   !started
+   ||
+   paused
+   ||
+   document.pointerLockElement
+   !==renderer.domElement
+  )
+   return;
+
+
+  if(e.button===0)
+   breakBlock();
+
+
+  if(e.button===2)
+   placeBlock();
+
+ }
+);
+
+
+document.addEventListener(
+ "contextmenu",
+ e=>
+  e.preventDefault()
+);
+
+
+document.getElementById(
+ "start"
+).onclick=()=>{
+
+ started=true;
+
+ paused=false;
+
+ document.getElementById(
+  "startScreen"
+ ).style.display=
+  "none";
+
+
+ renderer.domElement
+  .requestPointerLock();
+
+};
+
+
+document.addEventListener(
+ "pointerlockchange",
+ ()=>{
+
+  if(
+   started
+   &&
+   document.pointerLockElement
+   !==renderer.domElement
+  ){
+
+   paused=true;
+
+   document.getElementById(
+    "startScreen"
+   ).style.display=
+    "flex";
+
+  }
+
+ }
+);
+
+
+document.getElementById(
+ "reset"
+).onclick=()=>{
+
+ if(
+  confirm(
+   "Generate a completely new Block World?"
+  )
+ ){
+
+  localStorage.removeItem(
+   "blockWorldMaxSave"
+  );
+
+  player.x=0;
+  player.y=8;
+  player.z=10;
+
+  yaw=0;
+  pitch=0;
+
+  generateWorld();
+
+  show(
+   "New world generated!"
+  );
+
+ }
+
+};
+
+
+addEventListener(
+ "resize",
+ ()=>{
+
+  camera.aspect=
+   innerWidth/innerHeight;
+
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(
+   innerWidth,
+   innerHeight
+  );
+
+ }
+);
+
 
 function animate(){
 
-    requestAnimationFrame(
-        animate
-    );
+ requestAnimationFrame(
+  animate
+ );
 
-    updatePlayer();
 
-    renderer.render(
-        scene,
-        camera
-    );
+ time=
+  (time+.0007)%1;
+
+
+ const night=
+  Math.sin(
+   time*Math.PI*2
+  )*.5+.5;
+
+
+ sun.intensity=
+  .65+night*1.25;
+
+
+ scene.background.lerpColors?.(
+  new THREE.Color(0x10182e),
+  new THREE.Color(0x87ceeb),
+  night
+ );
+
+
+ scene.fog.color.copy(
+  scene.background
+ );
+
+
+ sky.material.color.copy(
+  scene.background
+ );
+
+
+ updatePlayer();
+
+ updateStats();
+
+ renderer.render(
+  scene,
+  camera
+ );
+
 }
+
+
+makeHotbar();
+
+loadWorld();
+
+camera.position.set(
+ player.x,
+ player.y,
+ player.z
+);
 
 animate();
 
